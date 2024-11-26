@@ -2,31 +2,34 @@ package handlers
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/merbinr/catcher/internal/helpers"
+	"github.com/merbinr/catcher/internal/models"
 )
 
-func WebhookHandler(c *gin.Context) {
-	// Read the request headers
+func AwsVpcLogWebhookHandler(c *gin.Context) {
+	// checking authentication
 	headers := c.Request.Header
+	authentication_success := helpers.CheckAuthentication(headers)
 
-	// Read the request body
-	body, err := io.ReadAll(c.Request.Body) // Using io.ReadAll
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to read request body",
-		})
+	if !authentication_success {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized!"})
+	}
+
+	// reading body
+	var request_body models.AwsVpcLogWebhookModel
+	if err := c.ShouldBindBodyWithJSON(&request_body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Schema!"})
 		return
 	}
 
-	// Log the headers and body
-	fmt.Println("Headers:", headers)
-	fmt.Println("Body:", string(body))
+	// passing to queue
 
-	// Respond with 201 Created
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Webhook received",
+	fmt.Printf("Parsed Request: %+v\n", request_body)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
 	})
 }

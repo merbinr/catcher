@@ -9,11 +9,8 @@ import (
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
-	// Example route
-	r.GET("/test", handlers.TestHandler)
-
 	// Webhook route
-	r.POST("/webhook", handlers.WebhookHandler)
+	r.POST("aws/logs/vpc/webhook", handlers.AwsVpcLogWebhookHandler)
 
 	return r
 }
