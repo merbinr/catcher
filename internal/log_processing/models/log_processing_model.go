@@ -1,15 +1,11 @@
 package models
 
-type AwsVpcLogRecordMessageData struct {
-	Message string
-}
-
-type AwsVpcLogProccessedData struct {
+type VpcNormalizedProcessedData struct {
 	UniqueStr string
-	Data      AwsVpcLogParsedData
+	Data      VpcNormalizedData
 }
 
-type AwsVpcLogParsedData struct {
+type VpcNormalizedData struct {
 	Version         int
 	AccountID       string
 	InterfaceID     string

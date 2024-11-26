@@ -1,9 +1,7 @@
-package helpers
+package web
 
 import (
 	"os"
-
-	"github.com/merbinr/catcher/internal/models"
 )
 
 // firehose sends X-Amz-Firehose-Access-Key in response header with user provider API KEY
@@ -21,7 +19,7 @@ func CheckAuthentication(headers map[string][]string) bool {
 	return api_token_from_request == valid_api_token
 }
 
-func PassLogsToQueue(requestBody models.AwsVpcLogWebhookModel) {
+func PassLogsToQueue(requestBody AwsVpcLogWebhookModel) {
 	records := requestBody.Records
 	for _, record := range records {
 		base64_log_data := record.Data

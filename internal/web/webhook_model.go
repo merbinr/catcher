@@ -1,4 +1,4 @@
-package models
+package web
 
 type AwsVpcLogWebhookModel struct {
 	RequestId string                 `json:"requestId" binding:"required"`

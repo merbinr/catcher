@@ -1,7 +1,14 @@
-package models
+package config
 
 type Config struct {
+	Redis      redisConfig      `yaml:"redis"`
 	LogSources logSourcesConfig `yaml:"log_sources"`
+}
+
+type redisConfig struct {
+	Address string `yaml:"address"`
+	Expiry  int    `yaml:"expiry"`
+	DB      string `yaml:"db"`
 }
 
 type logSourcesConfig struct {

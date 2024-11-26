@@ -9,40 +9,41 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/merbinr/catcher/internal/models"
+	"github.com/merbinr/catcher/internal/log_processing/models"
+	"github.com/merbinr/catcher/internal/web"
 )
 
-func AwsVpcLogFlowLogParsing(each_log_records models.AwsVpcLogRecordsData) (models.AwsVpcLogProccessedData, error) {
+func AwsVpcLogFlowLogParsing(each_log_records web.AwsVpcLogRecordsData) (models.VpcNormalizedProcessedData, error) {
 	base64_log_string := each_log_records.Data
 	decodedBytes, err := base64.StdEncoding.DecodeString(base64_log_string)
 	if err != nil {
-		return models.AwsVpcLogProccessedData{}, fmt.Errorf("error on decoding AWS VPC log, log_data: %s",
+		return models.VpcNormalizedProcessedData{}, fmt.Errorf("error on decoding AWS VPC log, log_data: %s",
 			base64_log_string)
 	}
 	// string of decodedBytes will be looks like {"message" : "xx xx xxx xx xx xx"}
-	var messageBody models.AwsVpcLogRecordMessageData
+	var messageBody AwsVpcLogRecordMessageData
 	err = json.Unmarshal(decodedBytes, &messageBody)
 	if err != nil {
-		return models.AwsVpcLogProccessedData{}, fmt.Errorf("error on decoding AWS VPC log, log_data: %s",
+		return models.VpcNormalizedProcessedData{}, fmt.Errorf("error on decoding AWS VPC log, log_data: %s",
 			base64_log_string)
 	}
 	flow_log_string := messageBody.Message
 
 	VpcLogData, err := parseFlowLog(flow_log_string)
 	if err != nil {
-		return models.AwsVpcLogProccessedData{}, fmt.Errorf("unable to parse AWS vpc log message, log_data: %s, error: %s",
+		return models.VpcNormalizedProcessedData{}, fmt.Errorf("unable to parse AWS vpc log message, log_data: %s, error: %s",
 			base64_log_string,
 			err)
 	}
 	fmt.Printf("%+v\n", VpcLogData)
 	unique_string, err := createUniqueString(VpcLogData)
 	if err != nil {
-		return models.AwsVpcLogProccessedData{}, fmt.Errorf("unable to create unique string for log_data: %s, error: %s",
+		return models.VpcNormalizedProcessedData{}, fmt.Errorf("unable to create unique string for log_data: %s, error: %s",
 			base64_log_string,
 			err)
 	}
 
-	var aws_vpc_log_processed_data models.AwsVpcLogProccessedData
+	var aws_vpc_log_processed_data models.VpcNormalizedProcessedData
 	aws_vpc_log_processed_data.UniqueStr = unique_string
 	aws_vpc_log_processed_data.Data = VpcLogData
 	println(unique_string)
@@ -50,62 +51,62 @@ func AwsVpcLogFlowLogParsing(each_log_records models.AwsVpcLogRecordsData) (mode
 
 }
 
-func parseFlowLog(log string) (models.AwsVpcLogParsedData, error) {
+func parseFlowLog(log string) (models.VpcNormalizedData, error) {
 	fields := strings.Fields(log)
 	if len(fields) != 14 {
-		return models.AwsVpcLogParsedData{},
+		return models.VpcNormalizedData{},
 			fmt.Errorf("unexpected number of fields in the AWS VPC log entry")
 	}
 
 	version, err := convertToInt(fields[0])
 	if err != nil {
-		return models.AwsVpcLogParsedData{},
+		return models.VpcNormalizedData{},
 			fmt.Errorf("unable to convert version field to int type")
 	}
 
 	destinationPort, err := convertToInt(fields[5])
 	if err != nil {
-		return models.AwsVpcLogParsedData{},
+		return models.VpcNormalizedData{},
 			fmt.Errorf("unable to convert destinationPort field to int type")
 	}
 
 	sourcePort, err := convertToInt(fields[6])
 	if err != nil {
-		return models.AwsVpcLogParsedData{},
+		return models.VpcNormalizedData{},
 			fmt.Errorf("unable to convert sourcePort field to int type")
 	}
 
 	protocol, err := convertToInt(fields[7])
 	if err != nil {
-		return models.AwsVpcLogParsedData{},
+		return models.VpcNormalizedData{},
 			fmt.Errorf("unable to convert protocol field to int type")
 	}
 
 	packets, err := convertToInt(fields[8])
 	if err != nil {
-		return models.AwsVpcLogParsedData{},
+		return models.VpcNormalizedData{},
 			fmt.Errorf("unable to convert packets field to int type")
 	}
 
 	bytes, err := convertToInt(fields[9])
 	if err != nil {
-		return models.AwsVpcLogParsedData{},
+		return models.VpcNormalizedData{},
 			fmt.Errorf("unable to convert bytes field to int type")
 	}
 
 	startTime, err := convertToInt(fields[10])
 	if err != nil {
-		return models.AwsVpcLogParsedData{},
+		return models.VpcNormalizedData{},
 			fmt.Errorf("unable to convert startTime field to int type")
 	}
 
 	endTime, err := convertToInt(fields[11])
 	if err != nil {
-		return models.AwsVpcLogParsedData{},
+		return models.VpcNormalizedData{},
 			fmt.Errorf("unable to convert endTime field to int type")
 	}
 
-	flowLog := models.AwsVpcLogParsedData{
+	flowLog := models.VpcNormalizedData{
 		Version:         version,
 		AccountID:       fields[1],
 		InterfaceID:     fields[2],
@@ -128,13 +129,12 @@ func parseFlowLog(log string) (models.AwsVpcLogParsedData, error) {
 func convertToInt(value string) (int, error) {
 	output, err := strconv.Atoi(value)
 	if err != nil {
-		println("Unexpected error when converting to int value %s, error: %s", value, err)
-		os.Exit((1))
+		return 0, fmt.Errorf("unexpected error when converting to int value %s, error: %s", value, err)
 	}
 	return output, nil
 }
 
-func createUniqueString(flowLog models.AwsVpcLogParsedData) (string, error) {
+func createUniqueString(flowLog models.VpcNormalizedData) (string, error) {
 	unique_string_fields := os.Getenv("AWS_VPC_LOGS_UNIQUE_STRING_FIELDS")
 	if unique_string_fields == "" {
 		unique_string_fields = "AccountID,InterfaceID,SourceIP,SourcePort,DestinationPort"

@@ -5,13 +5,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/merbinr/catcher/internal/helpers"
-	"github.com/merbinr/catcher/internal/routes"
+	"github.com/merbinr/catcher/internal/config"
+	"github.com/merbinr/catcher/internal/web"
 )
 
 func main() {
 	// Loading config yml data so helpers.ConfigData will be accessible
-	helpers.LoadConfig()
+	config.LoadConfig()
 
 	DEPLOYMENT_MODE := os.Getenv("DEPLOYMENT_MODE")
 	if DEPLOYMENT_MODE == "" {
@@ -19,7 +19,7 @@ func main() {
 	}
 
 	if strings.ToLower(DEPLOYMENT_MODE) == "prod" {
-		r := routes.SetupRouter() // Setup routes
+		r := web.SetupRouter() // Setup routes
 		if err := r.Run(":8080"); err != nil {
 			log.Fatalf("Failed to start server: %v", err)
 		}

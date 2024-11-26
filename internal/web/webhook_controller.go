@@ -1,25 +1,23 @@
-package handlers
+package web
 
 import (
 	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/merbinr/catcher/internal/helpers"
-	"github.com/merbinr/catcher/internal/models"
 )
 
 func AwsVpcLogWebhookHandler(c *gin.Context) {
 	// checking authentication
 	headers := c.Request.Header
-	authentication_success := helpers.CheckAuthentication(headers)
+	authentication_success := CheckAuthentication(headers)
 
 	if !authentication_success {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized!"})
 	}
 
 	// reading body
-	var request_body models.AwsVpcLogWebhookModel
+	var request_body AwsVpcLogWebhookModel
 	if err := c.ShouldBindBodyWithJSON(&request_body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Schema!"})
 		return

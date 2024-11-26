@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/merbinr/catcher/internal/models"
+	"github.com/merbinr/catcher/internal/web"
 )
 
 func LocalRun() {
@@ -15,7 +15,7 @@ func LocalRun() {
 	fmt.Printf("%+v\n", local_data)
 }
 
-func readLocalData(filename string) models.AwsVpcLogWebhookModel {
+func readLocalData(filename string) web.AwsVpcLogWebhookModel {
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatalf("Failed to open file: %s", err)
@@ -26,7 +26,7 @@ func readLocalData(filename string) models.AwsVpcLogWebhookModel {
 		log.Fatalf("Failed to read file: %s", err)
 	}
 
-	var TestRequestBody models.AwsVpcLogWebhookModel
+	var TestRequestBody web.AwsVpcLogWebhookModel
 	err = json.Unmarshal(byteValue, &TestRequestBody)
 	if err != nil {
 		log.Fatalf("Failed to unmarshal JSON: %s", err)
