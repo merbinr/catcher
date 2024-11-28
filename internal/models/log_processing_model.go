@@ -1,10 +1,5 @@
 package models
 
-type VpcNormalizedProcessedData struct {
-	UniqueStr string
-	Data      VpcNormalizedData
-}
-
 type VpcNormalizedData struct {
 	Version         int
 	AccountID       string

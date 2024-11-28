@@ -1,14 +1,15 @@
-package config
+package models
 
 type Config struct {
-	Redis      redisConfig      `yaml:"redis"`
+	RabbitMQ   rabbitmqConfig   `yaml:"rabbitmq"`
 	LogSources logSourcesConfig `yaml:"log_sources"`
 }
 
-type redisConfig struct {
-	Address string `yaml:"address"`
-	Expiry  int    `yaml:"expiry"`
-	DB      string `yaml:"db"`
+type rabbitmqConfig struct {
+	User string `yaml:"user"`
+	Host string `yaml:"host"`
+	Port uint16 `yaml:"port"`
+	Name string `yaml:"queue_name"`
 }
 
 type logSourcesConfig struct {

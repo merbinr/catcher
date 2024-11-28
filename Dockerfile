@@ -1,7 +1,7 @@
 FROM golang:1.22-alpine AS build_env
 WORKDIR /app
 COPY . .
-RUN go build -o webapp ./cmd/main.go
+RUN go build -o webapp ./cmd/*.go
 
 
 FROM alpine:3.20
