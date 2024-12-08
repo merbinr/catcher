@@ -7,6 +7,7 @@ import (
 	"github.com/merbinr/catcher/internal/logs/vpc/aws"
 	"github.com/merbinr/catcher/internal/models"
 	"github.com/merbinr/catcher/internal/rabbitmq"
+	log_models "github.com/merbinr/log_models/models"
 )
 
 func AwsVpcLogProcessing(WebhookData models.AwsVpcLogWebhookModel) error {
@@ -25,7 +26,7 @@ func AwsVpcLogProcessing(WebhookData models.AwsVpcLogWebhookModel) error {
 	return nil
 }
 
-func logProcessing(normalized_data models.VpcNormalizedData) error {
+func logProcessing(normalized_data log_models.VpcNormalizedData) error {
 
 	log_data_json, err := json.Marshal(normalized_data)
 	if err != nil {

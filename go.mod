@@ -4,6 +4,8 @@ go 1.22.5
 
 require github.com/gin-gonic/gin v1.10.0
 
+require github.com/merbinr/log_models v0.0.0-20241201181219-2e7df76c9734
+
 require (
 	github.com/bytedance/sonic v1.12.4 // indirect
 	github.com/bytedance/sonic/loader v0.2.1 // indirect

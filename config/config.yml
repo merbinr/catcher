@@ -1,11 +1,5 @@
 rabbitmq:
   user: rabbit
-  host: rabbitmq
+  host: catcher-outgoing-queue
   port: 5672
   queue_name: logs
-
-log_sources:
-  aws_vpc_logs:
-    default_unique_string: awsvpclogs_
-    unique_string_fields: AccountID,InterfaceID,SourceIP,SourcePort,DestinationPort 
-

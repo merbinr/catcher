@@ -19,7 +19,7 @@ var Rabbitmq_conn RabbitMQConn
 func CreateQueueConn() error {
 	var err error
 
-	password := os.Getenv("RABBITMQ_PASSWORD")
+	password := os.Getenv("CATCHER_RABBITMQ_PASSWORD")
 	if password == "" {
 		return fmt.Errorf("queue password is not set, please set the RABBITMQ_PASSWORD env")
 	}
