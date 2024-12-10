@@ -14,7 +14,7 @@ func AwsVpcLogProcessing(WebhookData models.AwsVpcLogWebhookModel) error {
 	for _, each_log_records := range WebhookData.Records {
 		normalized_data, err := aws.AwsVpcLogFlowLogParsing(each_log_records)
 		if err != nil {
-			return fmt.Errorf("unable to process the aws vpc log, request id: %s, record: %s, error: %s",
+			return fmt.Errorf("unable to parse the aws vpc log, request id: %s, record: %s, error: %s",
 				WebhookData.RequestId, each_log_records.Data, err)
 		}
 		err = logProcessing(normalized_data)

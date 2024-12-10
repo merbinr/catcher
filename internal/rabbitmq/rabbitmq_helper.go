@@ -21,13 +21,17 @@ func CreateQueueConn() error {
 
 	password := os.Getenv("CATCHER_RABBITMQ_PASSWORD")
 	if password == "" {
-		return fmt.Errorf("queue password is not set, please set the RABBITMQ_PASSWORD env")
+		return fmt.Errorf("queue password is not set, please set the CATCHER_RABBITMQ_PASSWORD env")
+	}
+	host := os.Getenv("CATCHER_OUTGOING_QUEUE_HOST")
+	if host == "" {
+		return fmt.Errorf("queue host is not set, please set the CATCHER_OUTGOING_QUEUE_HOST env")
 	}
 
 	conn_string := fmt.Sprintf("amqp://%s:%s@%s:%d/",
 		config.ConfigData.RabbitMQ.User,
 		password,
-		config.ConfigData.RabbitMQ.Host,
+		host,
 		config.ConfigData.RabbitMQ.Port)
 
 	Rabbitmq_conn.Queue_Client, err = amqp.Dial(conn_string)
@@ -43,8 +47,8 @@ func CreateQueueConn() error {
 	queueName := config.ConfigData.RabbitMQ.Name
 	Rabbitmq_conn.Queue, err = Rabbitmq_conn.Queue_Channel.QueueDeclare(
 		queueName, // name
-		false,     // durable
-		true,      // delete when unused
+		true,      // durable
+		false,     // delete when unused
 		false,     // exclusive
 		false,     // no-wait
 		nil,       // arguments

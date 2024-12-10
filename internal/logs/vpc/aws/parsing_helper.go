@@ -19,23 +19,19 @@ func AwsVpcLogFlowLogParsing(each_log_records models.AwsVpcLogRecordsData) (log_
 	base64_log_string := each_log_records.Data
 	decodedBytes, err := base64.StdEncoding.DecodeString(base64_log_string)
 	if err != nil {
-		return log_models.VpcNormalizedData{}, fmt.Errorf("error on decoding AWS VPC log, log_data: %s",
-			base64_log_string)
+		return log_models.VpcNormalizedData{}, err
 	}
 	// string of decodedBytes will be looks like {"message" : "xx xx xxx xx xx xx"}
 	var messageBody AwsVpcLogRecordMessageData
 	err = json.Unmarshal(decodedBytes, &messageBody)
 	if err != nil {
-		return log_models.VpcNormalizedData{}, fmt.Errorf("error on decoding AWS VPC log, log_data: %s",
-			base64_log_string)
+		return log_models.VpcNormalizedData{}, err
 	}
 	flow_log_string := messageBody.Message
 
 	vpc_normalized_data, err := parseFlowLog(flow_log_string)
 	if err != nil {
-		return log_models.VpcNormalizedData{}, fmt.Errorf("unable to parse AWS vpc log message, log_data: %s, error: %s",
-			base64_log_string,
-			err)
+		return log_models.VpcNormalizedData{}, err
 	}
 	return vpc_normalized_data, nil
 }

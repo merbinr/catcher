@@ -1,5 +1,5 @@
 rabbitmq:
+  # For host, set CATCHER_OUTGOING_QUEUE_HOST environment variable 
   user: rabbit
-  host: catcher-outgoing-queue
   port: 5672
   queue_name: logs

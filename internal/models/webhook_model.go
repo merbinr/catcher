@@ -2,7 +2,7 @@ package models
 
 type AwsVpcLogWebhookModel struct {
 	RequestId string                 `json:"requestId" binding:"required"`
-	Timestamp int64                  `json:"timestamp" binding:"required"`
+	Timestamp int                    `json:"timestamp" binding:"required"`
 	Records   []AwsVpcLogRecordsData `json:"records" binding:"required"`
 }
 
