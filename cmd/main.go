@@ -6,7 +6,8 @@ import (
 	"os"
 
 	"github.com/merbinr/catcher/internal/config"
-	"github.com/merbinr/catcher/internal/rabbitmq"
+	deduplicator_queue "github.com/merbinr/catcher/internal/queue/deduplicator"
+	detector_queue "github.com/merbinr/catcher/internal/queue/detector"
 	"github.com/merbinr/catcher/internal/web"
 )
 
@@ -18,8 +19,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Creating a connection to RabbitMQ, so rabbitmq.Rabbitmq_conn will be accessible
-	err = rabbitmq.CreateQueueConn()
+	// Creating a RabbitMQ queue connecton for deduplicator queue
+	err = deduplicator_queue.CreateDedupeQueueConn()
+	if err != nil {
+		slog.Error(fmt.Sprintf("%s", err))
+		os.Exit(1)
+	}
+
+	// Creating a RabbitMQ queue connecton for detector queue
+	err = detector_queue.CreateDetectorQueueConn()
 	if err != nil {
 		slog.Error(fmt.Sprintf("%s", err))
 		os.Exit(1)

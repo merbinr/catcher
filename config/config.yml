@@ -1,5 +1,5 @@
 rabbitmq:
-  # For host, set CATCHER_OUTGOING_QUEUE_HOST environment variable 
+  # For host, set CATCHER_DEDUPE_QUEUE_HOST, CATCHER_DETECTOR_QUEUE_HOST environment variable 
   user: rabbit
   port: 5672
   queue_name: logs
