@@ -7,7 +7,6 @@ import (
 	"github.com/merbinr/catcher/internal/logs/vpc/aws"
 	"github.com/merbinr/catcher/internal/models"
 	deduplicator_queue "github.com/merbinr/catcher/internal/queue/deduplicator"
-	detector_queue "github.com/merbinr/catcher/internal/queue/detector"
 	log_models "github.com/merbinr/log_models/models"
 )
 
@@ -38,12 +37,5 @@ func logProcessing(normalized_data log_models.VpcNormalizedData) error {
 	if err != nil {
 		return fmt.Errorf("unable to send log message to deduplicator queue, error: %s, request", err)
 	}
-
-	// Send message to detector queue
-	err = detector_queue.DetectorRabbitmqConn.SendLogMessageToDetectorQueue(&log_data_json)
-	if err != nil {
-		return fmt.Errorf("unable to send log message to detector queue, error: %s, request", err)
-	}
-
 	return nil
 }
