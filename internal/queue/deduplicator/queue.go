@@ -19,13 +19,13 @@ var DedupeRabbitmqConn RabbitMQConnForDedupe
 func CreateDedupeQueueConn() error {
 	var err error
 
-	password := os.Getenv("CATCHER_DEDUPE_RABBITMQ_PASSWORD")
+	password := os.Getenv("CATCHER_OUTGOING_QUEUE_PASSWORD")
 	if password == "" {
-		return fmt.Errorf("queue password is not set, please set the CATCHER_DEDUPE_RABBITMQ_PASSWORD env")
+		return fmt.Errorf("queue password is not set, please set the CATCHER_OUTGOING_QUEUE_PASSWORD env")
 	}
-	host := os.Getenv("CATCHER_DEDUPE_QUEUE_HOST")
+	host := os.Getenv("CATCHER_OUTGOING_QUEUE_HOST")
 	if host == "" {
-		return fmt.Errorf("queue host is not set, please set the CATCHER_DEDUPE_QUEUE_HOST env")
+		return fmt.Errorf("queue host is not set, please set the CATCHER_OUTGOING_QUEUE_HOST env")
 	}
 
 	conn_string := fmt.Sprintf("amqp://%s:%s@%s:%d/",
