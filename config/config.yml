@@ -1,5 +1,0 @@
-rabbitmq:
-  # For host, set CATCHER_DEDUPE_QUEUE_HOST environment variable 
-  user: rabbit
-  port: 5672
-  queue_name: logs
