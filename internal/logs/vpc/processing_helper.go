@@ -3,16 +3,17 @@ package vpc
 import (
 	"encoding/json"
 	"fmt"
-	"log/slog"
 
 	"github.com/merbinr/catcher/internal/logs/vpc/aws"
 	"github.com/merbinr/catcher/internal/models"
 	deduplicator_queue "github.com/merbinr/catcher/internal/queue/deduplicator"
+	"github.com/merbinr/catcher/pkg/logger"
 	log_models "github.com/merbinr/log_models/models"
 )
 
 func AwsVpcLogProcessing(WebhookData models.AwsVpcLogWebhookModel) error {
-	slog.Info(fmt.Sprintf("processing AWS VPC log, request id: %s", WebhookData.RequestId))
+	logger := logger.GetLogger()
+	logger.Info(fmt.Sprintf("processing AWS VPC log, request id: %s", WebhookData.RequestId))
 	for _, each_log_records := range WebhookData.Records {
 		normalized_data, err := aws.AwsVpcLogFlowLogParsing(each_log_records)
 		if err != nil {
@@ -25,12 +26,11 @@ func AwsVpcLogProcessing(WebhookData models.AwsVpcLogWebhookModel) error {
 				err, WebhookData.RequestId)
 		}
 	}
-	slog.Info(fmt.Sprintf("AWS VPC log processed successfully, request id: %s", WebhookData.RequestId))
+	logger.Info(fmt.Sprintf("AWS VPC log processed successfully, request id: %s", WebhookData.RequestId))
 	return nil
 }
 
 func logProcessing(normalized_data log_models.VpcNormalizedData) error {
-
 	log_data_json, err := json.Marshal(normalized_data)
 	if err != nil {
 		return err

@@ -2,16 +2,17 @@ package web
 
 import (
 	"fmt"
-	"log/slog"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/merbinr/catcher/internal/logs/vpc"
 	"github.com/merbinr/catcher/internal/models"
+	"github.com/merbinr/catcher/pkg/logger"
 )
 
 func AwsVpcLogWebhookHandler(c *gin.Context) {
+	logger := logger.GetLogger()
 	// checking authentication
 	headers := c.Request.Header
 	authentication_success := CheckAuthentication(headers)
@@ -26,7 +27,7 @@ func AwsVpcLogWebhookHandler(c *gin.Context) {
 
 	err := c.ShouldBind(&request_body)
 	if err != nil {
-		slog.Error(fmt.Sprintf("error occured on binding request body, error: %s", err.Error()))
+		logger.Error(fmt.Sprintf("error occured on binding request body, error: %s", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		return
 	}
@@ -36,14 +37,14 @@ func AwsVpcLogWebhookHandler(c *gin.Context) {
 	if err != nil {
 		if strings.Contains(err.Error(), "illegal base64 data at input") {
 			// error on base64 decoding, should return unprocessable entity 422
-			slog.Error(fmt.Sprintf("invalid base64 data on request %s, error: %s",
+			logger.Error(fmt.Sprintf("invalid base64 data on request %s, error: %s",
 				request_body.RequestId, err))
 
 			c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "unprocessable entity"})
 			return
 		} else {
 			// unknown error, should return internal server error 500
-			slog.Error(fmt.Sprintf("error occured on processing %s log error: %s",
+			logger.Error(fmt.Sprintf("error occured on processing %s log error: %s",
 				request_body.RequestId, err))
 
 			c.JSON(http.StatusInternalServerError, gin.H{
