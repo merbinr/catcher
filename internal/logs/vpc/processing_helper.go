@@ -3,6 +3,7 @@ package vpc
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 
 	"github.com/merbinr/catcher/internal/logs/vpc/aws"
 	"github.com/merbinr/catcher/internal/models"
@@ -11,6 +12,7 @@ import (
 )
 
 func AwsVpcLogProcessing(WebhookData models.AwsVpcLogWebhookModel) error {
+	slog.Info(fmt.Sprintf("processing AWS VPC log, request id: %s", WebhookData.RequestId))
 	for _, each_log_records := range WebhookData.Records {
 		normalized_data, err := aws.AwsVpcLogFlowLogParsing(each_log_records)
 		if err != nil {
@@ -23,6 +25,7 @@ func AwsVpcLogProcessing(WebhookData models.AwsVpcLogWebhookModel) error {
 				err, WebhookData.RequestId)
 		}
 	}
+	slog.Info(fmt.Sprintf("AWS VPC log processed successfully, request id: %s", WebhookData.RequestId))
 	return nil
 }
 
